@@ -30,6 +30,7 @@ define([
         './Cesium3DTilesetCache',
         './Cesium3DTilesetStatistics',
         './Cesium3DTilesetTraversal',
+        './Cesium3DTilesetOffscreenTraversal',
         './Cesium3DTileStyleEngine',
         './ClippingPlaneCollection',
         './LabelCollection',
@@ -72,6 +73,7 @@ define([
         Cesium3DTilesetCache,
         Cesium3DTilesetStatistics,
         Cesium3DTilesetTraversal,
+        Cesium3DTilesetOffscreenTraversal,
         Cesium3DTileStyleEngine,
         ClippingPlaneCollection,
         LabelCollection,
@@ -180,6 +182,10 @@ define([
         this._loadTimestamp = undefined;
         this._timeSinceLoad = 0.0;
         this._extras = undefined;
+
+        this._requestedOffscreenTiles = [];
+        this._selectedOffscreenTiles = [];
+        this._offscreenCache = new Cesium3DTilesetCache();
 
         this._cullWithChildrenBounds = defaultValue(options.cullWithChildrenBounds, true);
         this._allTilesAdditive = true;
@@ -1891,6 +1897,17 @@ define([
                 }
             }
         }
+    };
+
+    /**
+     * TODO
+     * @param {Ray} ray The ray.
+     * @param {Number} [minimumGeometricError=0] Tiles with a geometric error less than this value are not sampled.
+     */
+    Cesium3DTileset.prototype.pickFromRay = function(ray, minimumGeometricError) {
+        minimumGeometricError = defaultValue(minimumGeometricError, 0.0);
+        Cesium3DTilesetOffscreenTraversal.selectTilesOffscreen(this, minimumGeometricError, frameState);
+
     };
 
     /**
