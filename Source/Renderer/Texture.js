@@ -567,8 +567,11 @@ define([
                 // Only valid for DOM-Element uploads
                 gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, preMultiplyAlpha);
                 gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, flipY);
-
-                gl.texSubImage2D(target, 0, xOffset, yOffset, pixelFormat, pixelDatatype, source);
+                if (xOffset === 0 && yOffset === 0) {
+                    gl.texImage2D(target, 0, pixelFormat, pixelFormat, pixelDatatype, source);
+                } else {
+                    gl.texSubImage2D(target, 0, xOffset, yOffset, pixelFormat, pixelDatatype, source);
+                }
             }
         }
 
